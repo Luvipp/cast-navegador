@@ -1,8 +1,8 @@
 {
-  "name": "cast-navegador-ps4",
-  "version": "1.0.0",
+  "name": "cast-navegador-media-center",
+  "version": "2.0.0",
   "private": true,
-  "description": "Protótipo de receptor de vídeo para navegador do PS4, controlado pelo celular.",
+  "description": "Media center web para controlar vídeos compatíveis no navegador do PS4 usando o celular.",
   "main": "server.js",
   "scripts": { "start": "node server.js" },
   "engines": { "node": ">=18" },

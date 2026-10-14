@@ -4,21 +4,24 @@ const path = require('path');
 const { WebSocketServer } = require('ws');
 
 const PORT = process.env.PORT || 3000;
+// Files are kept in the repository root to make mobile GitHub uploads simpler.
 const PUBLIC = __dirname;
 const rooms = new Map(); // code -> { screen, remote }
 const clientRooms = new WeakMap();
 
 const server = http.createServer((req, res) => {
-  const urlPath = decodeURIComponent((req.url || '/').split('?')[0]);
+  let urlPath;
+  try { urlPath = decodeURIComponent((req.url || '/').split('?')[0]); }
+  catch { res.writeHead(400); return res.end('Bad request'); }
   const requested = urlPath === '/' ? 'index.html' : urlPath.replace(/^\/+/, '');
-  const full = path.normalize(path.join(PUBLIC, requested));
+  const full = path.resolve(PUBLIC, requested);
   if (!full.startsWith(PUBLIC + path.sep) && full !== path.join(PUBLIC, 'index.html')) {
     res.writeHead(403); return res.end('Forbidden');
   }
   fs.readFile(full, (err, data) => {
-    if (err) { res.writeHead(404); return res.end('Not found'); }
+    if (err) { res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }); return res.end('Not found'); }
     const ext = path.extname(full).toLowerCase();
-    const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml' };
+    const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml', '.json': 'application/json; charset=utf-8' };
     res.writeHead(200, { 'Content-Type': types[ext] || 'application/octet-stream', 'Cache-Control': 'no-store' });
     res.end(data);
   });
@@ -77,4 +80,4 @@ wss.on('connection', ws => {
   ws.on('close', () => drop(ws));
   ws.on('error', () => drop(ws));
 });
-server.listen(PORT, '0.0.0.0', () => console.log(`Cast Navegador rodando na porta ${PORT}`));
+server.listen(PORT, '0.0.0.0', () => console.log(`Cast Navegador Media Center rodando na porta ${PORT}`));
