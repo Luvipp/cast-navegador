@@ -1,0 +1,10 @@
+{
+  "name": "cast-navegador-ps4",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Protótipo de receptor de vídeo para navegador do PS4, controlado pelo celular.",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" },
+  "dependencies": { "ws": "^8.18.0" }
+}

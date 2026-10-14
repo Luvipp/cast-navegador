@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#10131a"><title>Cast Navegador</title>
+<style>
+:root{color-scheme:dark;--bg:#10131a;--panel:#1b202b;--text:#f5f7fb;--muted:#aab2c0;--accent:#72e0b2;--danger:#ff8888}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#202b3a,var(--bg) 65%);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}main{width:min(900px,100%);margin:auto;padding:22px 16px 36px}.brand{display:flex;align-items:center;gap:12px;margin-bottom:22px}.logo{width:42px;height:42px;border-radius:13px;background:var(--accent);color:#0d1714;display:grid;place-items:center;font-size:24px;font-weight:900}.brand h1{font-size:23px;margin:0}.brand p{color:var(--muted);margin:2px 0 0;font-size:13px}.panel{background:rgba(27,32,43,.94);border:1px solid #333c4d;border-radius:18px;padding:20px;margin:14px 0;box-shadow:0 12px 30px #0002}.hidden{display:none!important}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.13em;color:var(--accent);font-weight:800}.code{font-size:clamp(38px,9vw,64px);letter-spacing:.16em;font-weight:850;text-align:center;margin:12px 0 4px}.center{text-align:center}.muted{color:var(--muted);line-height:1.5}.pill{display:inline-flex;align-items:center;gap:7px;border:1px solid #414a5b;border-radius:999px;padding:7px 11px;font-size:13px;color:var(--muted)}.dot{width:8px;height:8px;border-radius:50%;background:#8892a3}.dot.good{background:var(--accent)}label{display:block;font-size:14px;color:#d7dce5;margin:0 0 8px}input[type=text],input[type=url]{width:100%;border:1px solid #414a5b;background:#111620;color:white;border-radius:12px;padding:14px;font:inherit;outline:none}input:focus{border-color:var(--accent)}button{border:0;border-radius:12px;padding:13px 16px;background:var(--accent);color:#102019;font:700 15px system-ui;cursor:pointer}button.secondary{background:#303847;color:white;border:1px solid #465165}button:disabled{opacity:.4;cursor:not-allowed}.row{display:flex;gap:10px;align-items:center}.row>*{min-width:0}.row button{flex-shrink:0}.full{width:100%}.video-wrap{background:#050608;border-radius:14px;overflow:hidden;aspect-ratio:16/9;display:grid;place-items:center}video{display:block;width:100%;height:100%;max-height:60vh;background:#000}.empty{padding:24px;text-align:center;color:var(--muted)}.status{margin-top:12px}.error{color:var(--danger);font-size:14px;min-height:20px;margin-top:8px}.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.controls button{font-size:20px;padding:14px}.range{width:100%;accent-color:var(--accent)}.time{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:4px}.note{font-size:13px;color:var(--muted);line-height:1.55}.urlrow{display:flex;gap:8px}.urlrow input{flex:1;min-width:0}.footer{text-align:center;font-size:12px;color:#7f8999;margin-top:24px}@media(max-width:520px){main{padding:16px 12px 28px}.panel{padding:16px}.row.stack{align-items:stretch;flex-direction:column}.row.stack button{width:100%}.brand h1{font-size:21px}}
+</style></head>
+<body><main>
+<header class="brand"><div class="logo">▶</div><div><h1>Cast Navegador</h1><p>Seu celular controla. O navegador do PS4 reproduz.</p></div></header>
+<section id="screenMode" class="hidden">
+ <div class="panel center"><div class="eyebrow">Receptor do PS4</div><p class="muted">Deixe esta página aberta no navegador do PS4. No celular, abra o mesmo endereço e escolha “Controle do celular”.</p><div class="pill"><span id="screenDot" class="dot"></span><span id="screenStatus">Conectando ao servidor…</span></div><p class="muted" style="margin-bottom:0">Código para conectar o celular</p><div id="roomCode" class="code">------</div><p class="note">Se o código não aparecer, atualize a página quando o servidor estiver disponível.</p></div>
+ <div class="panel"><div class="eyebrow">Reprodução</div><div class="video-wrap"><video id="video" playsinline controls></video><div id="videoEmpty" class="empty">Aguardando um vídeo enviado pelo celular.</div></div><p id="screenError" class="error"></p><p class="note">Dica: envie um link direto para um arquivo MP4 ou outro formato de vídeo compatível. Links de páginas (YouTube, Netflix etc.) e conteúdos protegidos podem não funcionar.</p></div>
+</section>
+<section id="remoteMode" class="hidden">
+ <div class="panel"><div class="eyebrow">Conectar ao PS4</div><p class="muted">Digite o código de seis números que aparece na tela do PS4.</p><div class="row stack"><input id="joinCode" type="text" inputmode="numeric" maxlength="6" placeholder="Ex.: 482193" aria-label="Código do PS4"><button id="joinBtn">Conectar</button></div><p id="remoteStatus" class="error"></p></div>
+ <div id="remoteControls" class="hidden">
+  <div class="panel"><div class="eyebrow">Enviar vídeo</div><label for="videoUrl">Link direto do vídeo</label><input id="videoUrl" type="url" placeholder="https://site.com/video.mp4" autocomplete="url"><div style="height:10px"></div><button id="loadBtn" class="full">Enviar para o PS4</button><p class="note">Funciona melhor com links públicos diretos de MP4. O site não extrai vídeos de outras páginas nem contorna DRM.</p></div>
+  <div class="panel"><div class="eyebrow">Controles</div><div class="controls"><button class="secondary" id="backBtn" aria-label="Voltar 10 segundos">−10s</button><button id="playBtn" aria-label="Reproduzir ou pausar">▶ / Ⅱ</button><button class="secondary" id="forwardBtn" aria-label="Avançar 10 segundos">+10s</button></div><div style="margin-top:18px"><label for="seek">Posição do vídeo</label><input id="seek" class="range" type="range" min="0" max="100" value="0"><div class="time"><span id="currentTime">0:00</span><span id="duration">0:00</span></div></div><div style="margin-top:18px"><label for="volume">Volume</label><input id="volume" class="range" type="range" min="0" max="1" step="0.05" value="0.8"></div></div>
+ </div>
+</section>
+<div class="footer">Protótipo experimental • Sem conta, sem cadastro</div>
+</main>
+<script>
+(() => {
+ const qs = new URLSearchParams(location.search);
+ const mode = qs.get('mode') === 'screen' ? 'screen' : 'remote';
+ const $ = id => document.getElementById(id);
+ $('screenMode').classList.toggle('hidden', mode !== 'screen');
+ $('remoteMode').classList.toggle('hidden', mode !== 'remote');
+ const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+ let ws, joined = false, roomCode = '';
+ const send = obj => { if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(obj)); };
+ const fmt = s => { if (!Number.isFinite(s) || s < 0) s = 0; s = Math.floor(s); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
+ function connect() {
+  const host = location.host;
+  if (!host) { if(mode==='screen') $('screenStatus').textContent='Abra esta página por um endereço hospedado.'; return; }
+  ws = new WebSocket(`${protocol}//${host}`);
+  ws.onopen = () => { if(mode==='screen') send({type:'register-screen'}); };
+  ws.onclose = () => { if(mode==='screen') { $('screenStatus').textContent='Desconectado. Recarregue a página.'; $('screenDot').classList.remove('good'); } else if(!joined) $('remoteStatus').textContent='Não foi possível conectar ao servidor. Tente novamente.'; };
+  ws.onerror = () => { if(mode==='screen') $('screenStatus').textContent='Falha na conexão com o servidor.'; };
+  ws.onmessage = event => {
+   let m; try { m=JSON.parse(event.data); } catch { return; }
+   if(m.type==='registered' && mode==='screen') { roomCode=m.code; $('roomCode').textContent=roomCode; $('screenStatus').textContent='Pronto para conectar'; $('screenDot').classList.add('good'); }
+   if(m.type==='peer') {
+    if(mode==='screen') { $('screenStatus').textContent=m.connected?'Celular conectado':'Aguardando o celular'; $('screenDot').classList.toggle('good',m.connected); }
+    else if(joined) $('remoteStatus').textContent=m.connected?'Conectado ao PS4':'A conexão com o PS4 foi perdida.';
+   }
+   if(m.type==='joined' && mode==='remote') { joined=true; $('remoteStatus').textContent='Conectado! Envie um link de vídeo abaixo.'; $('remoteControls').classList.remove('hidden'); $('joinBtn').disabled=true; $('joinCode').disabled=true; }
+   if(m.type==='error' && mode==='remote') $('remoteStatus').textContent=m.message;
+   if(mode==='screen') handleScreenCommand(m);
+   if(mode==='remote' && m.type==='progress') {
+    const seek=$('seek'); if(!seek.matches(':active') && m.duration>0) { seek.max=m.duration; seek.value=m.currentTime||0; }
+    $('currentTime').textContent=fmt(m.currentTime); $('duration').textContent=fmt(m.duration);
+   }
+  };
+ }
+ function handleScreenCommand(m) {
+  const v=$('video');
+  if(m.type==='load') {
+   try { const u=new URL(m.url); if(!['http:','https:'].includes(u.protocol)) throw new Error('Use um link HTTP ou HTTPS.');
+    $('screenError').textContent=''; $('videoEmpty').classList.add('hidden'); v.classList.remove('hidden'); v.src=u.href; v.load();
+    const p=v.play(); if(p && p.catch) p.catch(()=>{$('screenError').textContent='O navegador bloqueou a reprodução automática. Use o botão ▶ no próprio vídeo.';});
+   } catch(e) { $('screenError').textContent=e.message||'Link inválido.'; }
+  } else if(m.type==='play') { v.play().catch(()=>{}); }
+  else if(m.type==='pause') v.pause();
+  else if(m.type==='toggle') { if(v.paused) v.play().catch(()=>{}); else v.pause(); }
+  else if(m.type==='seek' && Number.isFinite(m.time) && Number.isFinite(v.duration)) v.currentTime=Math.max(0,Math.min(v.duration,m.time));
+  else if(m.type==='volume') v.volume=Math.max(0,Math.min(1,Number(m.value)||0));
+  else if(m.type==='mute') v.muted=!!m.value;
+ }
+ if(mode==='screen') {
+  const v=$('video'); v.classList.add('hidden');
+  let lastSent=0;
+  v.addEventListener('timeupdate',()=>{ const now=Date.now(); if(now-lastSent>700){lastSent=now;send({type:'progress',currentTime:v.currentTime||0,duration:Number.isFinite(v.duration)?v.duration:0});} });
+  v.addEventListener('error',()=>{ if(v.currentSrc) $('screenError').textContent='Não consegui reproduzir este link. Teste um MP4 público e compatível.'; });
+ } else {
+  $('joinBtn').addEventListener('click',()=>{ const code=$('joinCode').value.replace(/\D/g,''); if(code.length!==6){$('remoteStatus').textContent='Digite os seis números do código.';return;} $('remoteStatus').textContent='Conectando…'; send({type:'join',code}); });
+  $('joinCode').addEventListener('input',()=>{$('joinCode').value=$('joinCode').value.replace(/\D/g,'').slice(0,6);});
+  $('loadBtn').addEventListener('click',()=>{ const url=$('videoUrl').value.trim(); try {const u=new URL(url);if(!['http:','https:'].includes(u.protocol))throw 0;send({type:'load',url:u.href});$('remoteStatus').textContent='Link enviado ao PS4.';}catch{$('remoteStatus').textContent='Digite um link http:// ou https:// válido.';} });
+  $('playBtn').addEventListener('click',()=>send({type:'toggle'}));
+  $('backBtn').addEventListener('click',()=>{const t=Number($('seek').value)||0;send({type:'seek',time:Math.max(0,t-10)});});
+  $('forwardBtn').addEventListener('click',()=>{const t=Number($('seek').value)||0;send({type:'seek',time:t+10});});
+  $('seek').addEventListener('change',()=>send({type:'seek',time:Number($('seek').value)}));
+  $('volume').addEventListener('input',()=>send({type:'volume',value:Number($('volume').value)}));
+ }
+ connect();
+})();
+</script></body></html>
