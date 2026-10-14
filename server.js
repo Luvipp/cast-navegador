@@ -4,7 +4,7 @@ const path = require('path');
 const { WebSocketServer } = require('ws');
 
 const PORT = process.env.PORT || 3000;
-const PUBLIC = path.join(__dirname, 'public');
+const PUBLIC = __dirname;
 const rooms = new Map(); // code -> { screen, remote }
 const clientRooms = new WeakMap();
 
